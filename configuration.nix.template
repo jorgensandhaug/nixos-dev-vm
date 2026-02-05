@@ -96,6 +96,7 @@ in {
     settings = {
       PermitRootLogin = "prohibit-password";
       PasswordAuthentication = false;
+      AcceptEnv = "LANG LC_ALL";
     };
   };
 
