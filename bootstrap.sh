@@ -242,7 +242,15 @@ sudo cp /tmp/nvim-lazy-lock.json "$NVIM_DIR/lazy-lock.json"
 sudo chown -R "$USERNAME:users" "/home/$USERNAME/.config"
 echo "  Neovim config installed."
 
-# ── Step 10: Reboot ──────────────────────────────────────────────
+# ── Step 10: Install tmux config ───────────────────────────────────
+echo ""
+echo "▶ Installing tmux configuration..."
+curl -fsSL "$REPO_URL/tmux.conf" -o /tmp/tmux.conf
+sudo cp /tmp/tmux.conf "/home/$USERNAME/.tmux.conf"
+sudo chown "$USERNAME:users" "/home/$USERNAME/.tmux.conf"
+echo "  tmux config installed."
+
+# ── Step 11: Reboot ──────────────────────────────────────────────
 echo ""
 echo "═══════════════════════════════════════════════════════════"
 echo "  NixOS installation complete!"
