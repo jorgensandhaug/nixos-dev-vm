@@ -1,0 +1,203 @@
+{ config, pkgs, modulesPath, lib, ... }:
+
+let
+  # ── User-configurable variables ──────────────────────────────────
+  # These are replaced by bootstrap.sh at install time.
+  hostname    = "@@HOSTNAME@@";
+  username    = "@@USERNAME@@";
+  sshPubKey   = "@@SSH_PUBKEY@@";
+  timeZone    = "@@TIMEZONE@@";
+  # ─────────────────────────────────────────────────────────────────
+in {
+
+  nixpkgs.config.allowUnfree = true;
+
+  # ── Hardware — Azure / Hyper-V Gen2 VM ──────────────────────────
+  boot.initrd.availableKernelModules = [
+    "sd_mod" "sr_mod" "hv_vmbus" "hv_storvsc" "hv_netvsc"
+    "ata_piix" "uhci_hcd" "virtio_pci" "virtio_blk" "virtio_net" "nvme"
+  ];
+  boot.initrd.kernelModules = [ "hv_vmbus" "hv_storvsc" "hv_netvsc" ];
+  boot.kernelModules = [ ];
+  boot.extraModulePackages = [ ];
+
+  # ── GRUB — EFI via Ubuntu shim chain ────────────────────────────
+  # CRITICAL: Azure Hyper-V boots via Ubuntu's EFI shim.
+  # efiInstallAsRemovable puts grub at the fallback EFI path so it
+  # works without NVRAM variables. Never wipe the EFI partition.
+  boot.loader.efi.efiSysMountPoint = "/boot/efi";
+  boot.loader.grub = {
+    enable = true;
+    efiSupport = true;
+    efiInstallAsRemovable = true;
+    device = "nodev";
+  };
+
+  # ── Kernel params — serial console + cgroups v2 ────────────────
+  boot.kernelParams = [
+    "console=tty1"
+    "console=ttyS0,115200n8"
+    "earlyprintk=ttyS0,115200"
+    "cgroup_no_v1=all"
+    "systemd.unified_cgroup_hierarchy=1"
+  ];
+
+  # ── Filesystems ─────────────────────────────────────────────────
+  # UUIDs are detected and substituted by bootstrap.sh
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/@@ROOT_UUID@@";
+    fsType = "ext4";
+  };
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/@@BOOT_UUID@@";
+    fsType = "ext4";
+  };
+  fileSystems."/boot/efi" = {
+    device = "/dev/disk/by-uuid/@@EFI_UUID@@";
+    fsType = "vfat";
+  };
+  fileSystems."/home" = {
+    device = "/dev/disk/by-label/home-data";
+    fsType = "ext4";
+    options = [ "defaults" "noatime" "nofail" ];
+  };
+
+  # ── Network — systemd-networkd ─────────────────────────────────
+  # CRITICAL: dhcpcd does NOT work on Azure Hyper-V. Must use
+  # systemd-networkd with explicit DHCP config.
+  networking.useDHCP = false;
+  networking.useNetworkd = true;
+  networking.hostName = hostname;
+
+  systemd.network = {
+    enable = true;
+    networks."10-eth" = {
+      matchConfig.Name = "eth*";
+      networkConfig = {
+        DHCP = "yes";
+        IPv6AcceptRA = true;
+      };
+      dhcpV4Config = {
+        UseDNS = true;
+        UseRoutes = true;
+      };
+    };
+  };
+
+  # ── Firewall ────────────────────────────────────────────────────
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [ 22 ];
+  };
+
+  # ── SSH ─────────────────────────────────────────────────────────
+  services.openssh = {
+    enable = true;
+    settings = {
+      PermitRootLogin = "prohibit-password";
+      PasswordAuthentication = false;
+    };
+  };
+
+  # ── Auto-generate SSH keypair for the user ─────────────────────
+  system.activationScripts.userSSHKey = lib.stringAfter [ "users" ] ''
+    if [ ! -f /home/${username}/.ssh/id_ed25519 ]; then
+      mkdir -p /home/${username}/.ssh
+      ${pkgs.openssh}/bin/ssh-keygen -t ed25519 -C "${username}@${hostname}" -f /home/${username}/.ssh/id_ed25519 -N ""
+      chown -R ${username}:users /home/${username}/.ssh
+      chmod 700 /home/${username}/.ssh
+      chmod 600 /home/${username}/.ssh/id_ed25519
+      chmod 644 /home/${username}/.ssh/id_ed25519.pub
+    fi
+  '';
+
+  # ── Users ───────────────────────────────────────────────────────
+  users.users.${username} = {
+    isNormalUser = true;
+    home = "/home/${username}";
+    extraGroups = [ "wheel" "docker" ];
+    openssh.authorizedKeys.keys = [ sshPubKey ];
+  };
+  users.users.root.openssh.authorizedKeys.keys = [ sshPubKey ];
+  security.sudo.wheelNeedsPassword = false;
+
+  # ── Tailscale ───────────────────────────────────────────────────
+  services.tailscale = {
+    enable = true;
+    useRoutingFeatures = "server";
+  };
+
+  # ── Docker ──────────────────────────────────────────────────────
+  virtualisation.docker = {
+    enable = true;
+    enableOnBoot = true;
+    storageDriver = "overlay2";
+    logDriver = "journald";
+    autoPrune = {
+      enable = true;
+      dates = "weekly";
+      flags = [ "--all" "--volumes" ];
+    };
+    daemon.settings = {
+      data-root = "/home/docker-data";
+      dns = [ "1.1.1.1" "8.8.8.8" ];
+      live-restore = true;
+      default-address-pools = [
+        { base = "172.30.0.0/16"; size = 24; }
+      ];
+    };
+  };
+
+  # ── Memory management ──────────────────────────────────────────
+  zramSwap = {
+    enable = true;
+    memoryPercent = 25;
+    algorithm = "zstd";
+  };
+  services.earlyoom = {
+    enable = true;
+    freeMemThreshold = 5;
+    freeSwapThreshold = 10;
+    enableNotifications = true;
+  };
+
+  # ── Dev tools ───────────────────────────────────────────────────
+  environment.systemPackages = with pkgs; [
+    # Core
+    git curl wget jq unzip tmux htop btop
+
+    # Search & navigation
+    ripgrep fd fzf tree
+
+    # Node.js + Bun
+    nodejs_22 bun corepack_22
+
+    # Docker
+    docker-compose lazydocker
+
+    # Git UI
+    lazygit
+
+    # Neovim ecosystem
+    tree-sitter
+  ];
+
+  programs.neovim = {
+    enable = true;
+    defaultEditor = true;
+    viAlias = true;
+    vimAlias = true;
+  };
+
+  programs.git.enable = true;
+
+  # ── System ──────────────────────────────────────────────────────
+  time.timeZone = timeZone;
+  nix.settings = {
+    experimental-features = [ "nix-command" "flakes" ];
+    trusted-users = [ "root" username ];
+  };
+
+  documentation.nixos.enable = false;
+  system.stateVersion = "24.11";
+}
