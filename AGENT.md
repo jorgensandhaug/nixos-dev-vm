@@ -163,19 +163,13 @@ TAILSCALE_IP=$(ssh <username>@$VM_IP "tailscale ip -4")  # get this BEFORE remov
 ssh <username>@$TAILSCALE_IP "hostname"
 ```
 
-## Step 8: Install Claude Code (optional)
-
-```bash
-ssh <username>@$TAILSCALE_IP "mkdir -p ~/.config/nixpkgs && echo '{ allowUnfree = true; }' > ~/.config/nixpkgs/config.nix && nix-env -iA nixpkgs.claude-code"
-```
-
-## Step 9: Install tsgo (optional)
+## Step 8: Install tsgo (optional)
 
 ```bash
 ssh <username>@$TAILSCALE_IP "bun add -g @typescript/native-preview"
 ```
 
-## Step 10: Get the VM's SSH public key
+## Step 9: Get the VM's SSH public key
 
 The VM auto-generates an SSH keypair. Get it for the human to add to GitHub:
 
@@ -185,7 +179,7 @@ ssh <username>@$TAILSCALE_IP "cat ~/.ssh/id_ed25519.pub"
 
 **Tell the human:** "Add this SSH key to your GitHub account at https://github.com/settings/ssh/new"
 
-## Step 11: Set up local DNS (optional, macOS)
+## Step 10: Set up local DNS (optional, macOS)
 
 To resolve `*.vm` to the VM's Tailscale IP on the human's Mac:
 
@@ -219,4 +213,4 @@ Then `ssh <username>@<hostname>.vm` works.
 - **Networking**: systemd-networkd (NOT dhcpcd — it fails on Hyper-V)
 - **Docker data**: stored on /home partition (data disk if attached)
 - **Memory**: zram swap (25% RAM, zstd) + earlyoom (kills at 5% free)
-- **NixOS channel**: 24.11 stable (claude-code needs nixpkgs-unstable via nix-env)
+- **NixOS channel**: 24.11 stable + nixpkgs-unstable overlay for neovim/claude-code

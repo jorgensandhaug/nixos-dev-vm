@@ -8,6 +8,11 @@ let
   sshPubKey   = "@@SSH_PUBKEY@@";
   timeZone    = "@@TIMEZONE@@";
   # ─────────────────────────────────────────────────────────────────
+
+  # Packages not in nixos-24.11 (neovim 0.11, claude-code)
+  unstable = import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixpkgs-unstable.tar.gz") {
+    config.allowUnfree = true;
+  };
 in {
 
   nixpkgs.config.allowUnfree = true;
@@ -165,7 +170,7 @@ in {
   # ── Dev tools ───────────────────────────────────────────────────
   environment.systemPackages = with pkgs; [
     # Core
-    git curl wget jq unzip tmux htop btop
+    git curl wget jq unzip tmux htop btop glibcLocales
 
     # Search & navigation
     ripgrep fd fzf tree autojump
@@ -181,6 +186,10 @@ in {
 
     # Neovim ecosystem
     tree-sitter
+
+    # From nixpkgs-unstable (not in nixos-24.11)
+    unstable.neovim
+    unstable.claude-code
   ];
 
   programs.neovim = {

@@ -69,16 +69,14 @@ The bootstrap accepts these flags:
 ## Post-install extras
 
 ```bash
-# Claude Code (AI coding assistant)
-mkdir -p ~/.config/nixpkgs && echo '{ allowUnfree = true; }' > ~/.config/nixpkgs/config.nix
-nix-env -iA nixpkgs.claude-code
-
 # TypeScript native compiler
 bun add -g @typescript/native-preview
 
 # Your VM's SSH key (add to GitHub)
 cat ~/.ssh/id_ed25519.pub
 ```
+
+Claude Code and Neovim 0.11 are pre-installed via the NixOS config (pulled from nixpkgs-unstable).
 
 ## How it works
 
