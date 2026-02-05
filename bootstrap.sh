@@ -217,7 +217,32 @@ sudo NIXOS_INSTALL_BOOTLOADER=1 "$SYSTEM_BUILD/bin/switch-to-configuration" boot
 
 echo "  NixOS installed successfully!"
 
-# ── Step 9: Reboot ───────────────────────────────────────────────
+# ── Step 9: Install nvim config ──────────────────────────────────
+echo ""
+echo "▶ Installing Neovim configuration..."
+NVIM_DIR="/home/$USERNAME/.config/nvim"
+sudo mkdir -p "$NVIM_DIR"
+curl -fsSL "$REPO_URL/nvim/init.lua" -o /tmp/nvim-init.lua
+sudo cp /tmp/nvim-init.lua "$NVIM_DIR/init.lua"
+
+for dir in lsp lua/config lua/plugins; do
+  sudo mkdir -p "$NVIM_DIR/$dir"
+done
+
+for f in lsp/tsgo.lua lua/config/keymaps.lua lua/config/lsp.lua lua/config/options.lua \
+         lua/plugins/fzf-lua.lua lua/plugins/lsp.lua lua/plugins/nvim-tree.lua lua/plugins/treesitter.lua; do
+  curl -fsSL "$REPO_URL/nvim/$f" -o "/tmp/nvim-$(basename $f)"
+  sudo cp "/tmp/nvim-$(basename $f)" "$NVIM_DIR/$f"
+done
+
+# Download lazy-lock.json for reproducible plugin versions
+curl -fsSL "$REPO_URL/nvim/lazy-lock.json" -o /tmp/nvim-lazy-lock.json
+sudo cp /tmp/nvim-lazy-lock.json "$NVIM_DIR/lazy-lock.json"
+
+sudo chown -R "$USERNAME:users" "/home/$USERNAME/.config"
+echo "  Neovim config installed."
+
+# ── Step 10: Reboot ──────────────────────────────────────────────
 echo ""
 echo "═══════════════════════════════════════════════════════════"
 echo "  NixOS installation complete!"
