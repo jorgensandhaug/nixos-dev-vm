@@ -1,10 +1,8 @@
-# NixOS Azure Dev VM
+# NixOS Dev VM
 
 One-command setup for a fully-configured NixOS development VM on Azure.
 
-**What you get:** 8 vCPU, 32GB RAM, Docker, Tailscale, Neovim, Node.js, Bun, and every dev tool you need — all declarative and reproducible.
-
-**Cost:** ~$60/month (Azure B8as_v2 burstable)
+**What you get:** Docker, Tailscale, Neovim, Node.js, Bun, and every dev tool you need — all declarative and reproducible.
 
 ## Quick start
 

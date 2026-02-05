@@ -1,4 +1,4 @@
-# Agent Instructions: NixOS Azure Dev VM
+# Agent Instructions: NixOS Dev VM
 
 You are setting up a NixOS development VM on Azure for your user. Follow these steps exactly.
 
@@ -17,12 +17,13 @@ Everything else is automated.
 
 ## Step 1: Create the Azure VM
 
+Ask the user what they want, or pick sensible defaults:
+
 ```bash
-# Pick your settings
 RESOURCE_GROUP="<user>-dev-vm"
-LOCATION="uksouth"            # or any Azure region
+LOCATION="uksouth"                # any Azure region
 VM_NAME="<user>-vm"
-VM_SIZE="Standard_B8as_v2"   # 8 vCPU, 32GB RAM, ~$60/mo burstable
+VM_SIZE="Standard_B8as_v2"       # default: 8 vCPU, 32GB RAM
 
 # Create resource group
 az group create -n "$RESOURCE_GROUP" -l "$LOCATION"
@@ -44,7 +45,7 @@ az vm create \
 
 Save the public IP from the output.
 
-### Optional: Add a 128GB data disk for /home
+### Optional: Add a data disk for /home
 
 ```bash
 az vm disk attach \
