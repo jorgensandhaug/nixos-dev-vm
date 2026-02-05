@@ -167,7 +167,7 @@ in {
     git curl wget jq unzip tmux htop btop
 
     # Search & navigation
-    ripgrep fd fzf tree
+    ripgrep fd fzf tree autojump
 
     # Node.js + Bun
     nodejs_22 bun corepack_22
@@ -198,6 +198,7 @@ in {
   # ── Shell aliases ─────────────────────────────────────────────
   environment.shellAliases = {
     lg = "lazygit";
+    cc = "claude --dangerously-skip-permissions";
   };
 
   # ── System ──────────────────────────────────────────────────────
