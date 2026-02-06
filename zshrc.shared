@@ -1,5 +1,6 @@
 # Dotfiles-managed zshrc
-# NixOS handles: autosuggestions, syntax-highlighting, zsh-vi-mode, starship, aliases
+# On NixOS: autosuggestions, syntax-highlighting, zsh-vi-mode, starship are system-level
+# On macOS: starship init below, others installed via brew if desired
 
 # History
 setopt SHARE_HISTORY
@@ -21,3 +22,6 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
     [ -f "$f" ] && source "$f" && break
   done
 }
+
+# Starship prompt (on NixOS this is a no-op since programs.starship handles it)
+command -v starship &>/dev/null && eval "$(starship init zsh)"
