@@ -1,8 +1,8 @@
 {
   "fzf-lua": { "branch": "main", "commit": "c86b72c62b01d2242cafa45fb0d1fc3bf66e6a2b" },
   "lazy.nvim": { "branch": "main", "commit": "306a05526ada86a7b30af95c5cc81ffba93fef97" },
-  "lsp-timeout.nvim": { "branch": "main", "commit": "6325906730330105a9adc41d0ceb8499b3072e2b" },
   "nvim-tree.lua": { "branch": "master", "commit": "037d89e60fb01a6c11a48a19540253b8c72a3c32" },
-  "nvim-treesitter": { "branch": "main", "commit": "4967fa48b0fe7a7f92cee546c76bb4bb61bb14d5" },
-  "nvim-web-devicons": { "branch": "master", "commit": "746ffbb17975ebd6c40142362eee1b0249969c5c" }
+  "nvim-treesitter": { "branch": "main", "commit": "92c9b016d16473dabd2bf3760196cf2d928edacc" },
+  "nvim-web-devicons": { "branch": "master", "commit": "746ffbb17975ebd6c40142362eee1b0249969c5c" },
+  "vim-tmux-navigator": { "branch": "master", "commit": "e41c431a0c7b7388ae7ba341f01a0d217eb3a432" }
 }
