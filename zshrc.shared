@@ -23,6 +23,19 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
   done
 }
 
+# Zsh plugins (on NixOS these are system-level, source here for macOS/other)
+() {
+  setopt local_options null_glob
+  for f in /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+           /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh; do
+    [ -f "$f" ] && source "$f" && break
+  done
+  for f in /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+           /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh; do
+    [ -f "$f" ] && source "$f" && break
+  done
+}
+
 # Aliases
 alias lg="lazygit"
 alias cc="claude --dangerously-skip-permissions"
