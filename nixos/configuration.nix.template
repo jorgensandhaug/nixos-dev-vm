@@ -121,6 +121,7 @@ in {
   users.users.${username} = {
     isNormalUser = true;
     home = "/home/${username}";
+    shell = pkgs.zsh;
     extraGroups = [ "wheel" "docker" ];
     openssh.authorizedKeys.keys = [ sshPubKey ];
   };
@@ -214,6 +215,17 @@ in {
     defaultEditor = true;
     viAlias = true;
     vimAlias = true;
+  };
+
+  programs.zsh = {
+    enable = true;
+    autosuggestions.enable = true;
+    syntaxHighlighting.enable = true;
+    histSize = 50000;
+    ohMyZsh = {
+      enable = true;
+      plugins = [ "git" "autojump" "docker" ];
+    };
   };
 
   programs.git.enable = true;
