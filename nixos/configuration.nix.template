@@ -222,6 +222,9 @@ in {
     autosuggestions.enable = true;
     syntaxHighlighting.enable = true;
     histSize = 50000;
+    interactiveShellInit = ''
+      source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+    '';
   };
 
   programs.starship.enable = true;
