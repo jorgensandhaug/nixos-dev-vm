@@ -222,11 +222,9 @@ in {
     autosuggestions.enable = true;
     syntaxHighlighting.enable = true;
     histSize = 50000;
-    ohMyZsh = {
-      enable = true;
-      plugins = [ "git" "autojump" "docker" ];
-    };
   };
+
+  programs.starship.enable = true;
 
   programs.git.enable = true;
 
