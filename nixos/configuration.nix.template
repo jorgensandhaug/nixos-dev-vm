@@ -235,6 +235,11 @@ in {
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.supportedLocales = [ "en_US.UTF-8/UTF-8" ];
 
+  # ── /bin/bash compat (NixOS only has /bin/sh by default) ────────
+  system.activationScripts.binbash = ''
+    ln -sf /run/current-system/sw/bin/bash /bin/bash 2>/dev/null || true
+  '';
+
   # ── Shell aliases ─────────────────────────────────────────────
   environment.shellAliases = {
     lg = "lazygit";
