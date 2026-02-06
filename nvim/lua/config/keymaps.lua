@@ -16,7 +16,7 @@ map('v', '<', '<gv')
 map('v', '>', '>gv')
 
 -- Save & quit shortcuts
-map('n', '<C-s>', '<cmd>wa<cr>', { desc = 'Save all' })
-map('i', '<C-s>', '<Esc><cmd>wa<cr>', { desc = 'Save all' })
+map('n', '<leader>s', '<cmd>w<cr>', { desc = 'Save file' })
+map('n', '<leader>S', '<cmd>wa<cr>', { desc = 'Save all' })
 map('n', '<leader>wq', '<cmd>wa<cr><cmd>qa<cr>', { desc = 'Save all & quit' })
 map('n', '<leader>qq', '<cmd>qa!<cr>', { desc = 'Quit all (discard changes)' })
