@@ -54,9 +54,18 @@ link_file "$DOTFILES_DIR/nvim" "$HOME/.config/nvim"
 echo "▶ Setting up tmux config..."
 link_file "$DOTFILES_DIR/tmux.conf" "$HOME/.tmux.conf"
 
-# ── Symlink zshrc ────────────────────────────────────────────────
-echo "▶ Setting up zshrc..."
-link_file "$DOTFILES_DIR/zshrc" "$HOME/.zshrc"
+# ── Set up zshrc ─────────────────────────────────────────────────
+if [[ ! -f "$HOME/.zshrc" ]]; then
+  echo "▶ Creating ~/.zshrc..."
+  cat > "$HOME/.zshrc" << 'EOF'
+source ~/dotfiles/zshrc.shared
+
+# Machine-specific config below
+EOF
+  echo "  Created ~/.zshrc (sources dotfiles/zshrc.shared)"
+else
+  echo "▶ ~/.zshrc already exists — make sure it sources ~/dotfiles/zshrc.shared"
+fi
 
 echo ""
 echo "Done! Dotfiles installed."

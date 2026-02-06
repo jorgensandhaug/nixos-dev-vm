@@ -246,13 +246,15 @@ fi
 sudo -u "$USERNAME" ln -sf "$DOTFILES_DIR/tmux.conf" "/home/$USERNAME/.tmux.conf"
 echo "  tmux config symlinked."
 
-# Symlink zshrc
-if [[ -e "/home/$USERNAME/.zshrc" ]]; then
-  echo "  Backing up existing .zshrc to ~/.zshrc.bak"
-  sudo -u "$USERNAME" mv "/home/$USERNAME/.zshrc" "/home/$USERNAME/.zshrc.bak"
+# Create zshrc that sources shared config
+if [[ ! -f "/home/$USERNAME/.zshrc" ]]; then
+  sudo -u "$USERNAME" bash -c "cat > /home/$USERNAME/.zshrc" << 'ZSHEOF'
+source ~/dotfiles/zshrc.shared
+
+# Machine-specific config below
+ZSHEOF
+  echo "  Created ~/.zshrc (sources dotfiles/zshrc.shared)"
 fi
-sudo -u "$USERNAME" ln -sf "$DOTFILES_DIR/zshrc" "/home/$USERNAME/.zshrc"
-echo "  zshrc symlinked."
 
 sudo chown -R "$USERNAME:users" "/home/$USERNAME/.config" "$DOTFILES_DIR"
 echo "  Dotfiles installed."
