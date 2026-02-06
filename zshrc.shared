@@ -3,14 +3,20 @@
 # On macOS: starship init below, others installed via brew if desired
 
 # History
-setopt SHARE_HISTORY
-setopt HIST_IGNORE_DUPS
-setopt HIST_IGNORE_SPACE
+HISTSIZE=100000
+SAVEHIST=100000
+setopt SHARE_HISTORY HIST_IGNORE_ALL_DUPS HIST_IGNORE_SPACE HIST_REDUCE_BLANKS
+
+# Navigation
+setopt AUTO_CD AUTO_PUSHD PUSHD_IGNORE_DUPS
+setopt EXTENDED_GLOB GLOB_DOTS INTERACTIVE_COMMENTS
 
 # Completion
 autoload -Uz compinit && compinit
 zstyle ':completion:*' menu select
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' special-dirs true
 
 # Autojump (null_glob avoids errors on systems without nix store)
 () {
