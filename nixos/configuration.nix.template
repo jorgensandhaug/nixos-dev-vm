@@ -181,15 +181,32 @@ in {
     # Docker
     docker-compose lazydocker
 
-    # Git UI
+    # Git
     lazygit
+    gh
+
+    # Linters & formatters
+    biome
+    oxlint
 
     # Neovim ecosystem
     tree-sitter
 
+    # Cloud CLIs
+    azure-cli
+    awscli2
+    google-cloud-sdk
+    oci-cli
+
+    # Platform CLIs
+    nodePackages.vercel
+    supabase-cli
+
     # From nixpkgs-unstable (not in nixos-24.11)
     unstable.neovim
     unstable.claude-code
+    unstable.codex
+    unstable.opencode
   ];
 
   programs.neovim = {
