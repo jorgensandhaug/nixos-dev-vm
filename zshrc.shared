@@ -11,10 +11,13 @@ autoload -Uz compinit && compinit
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
-# Autojump
-for f in /run/current-system/sw/share/autojump/autojump.zsh \
-         /nix/store/*-autojump-*/share/autojump/autojump.zsh \
-         /opt/homebrew/etc/profile.d/autojump.sh \
-         /usr/share/autojump/autojump.zsh; do
-  [ -f "$f" ] && source "$f" && break
-done
+# Autojump (null_glob avoids errors on systems without nix store)
+() {
+  setopt local_options null_glob
+  for f in /run/current-system/sw/share/autojump/autojump.zsh \
+           /nix/store/*-autojump-*/share/autojump/autojump.zsh \
+           /opt/homebrew/etc/profile.d/autojump.sh \
+           /usr/share/autojump/autojump.zsh; do
+    [ -f "$f" ] && source "$f" && break
+  done
+}
