@@ -1,5 +1,7 @@
 -- Enable LSP servers (configs live in ~/.config/nvim/lsp/*.lua)
 vim.lsp.enable('tsgo')
+vim.lsp.enable('biome')
+vim.lsp.enable('oxlint')
 
 -- LSP keymaps (set when an LSP attaches to a buffer)
 vim.api.nvim_create_autocmd('LspAttach', {
@@ -18,6 +20,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
     map('n', '<leader>rn', vim.lsp.buf.rename, 'Rename symbol')
     map('n', '[d', vim.diagnostic.goto_prev, 'Previous diagnostic')
     map('n', ']d', vim.diagnostic.goto_next, 'Next diagnostic')
+    map('n', '<leader>cf', function() vim.lsp.buf.format({ async = true }) end, 'Format file')
   end,
 })
 
@@ -40,7 +43,10 @@ vim.api.nvim_create_autocmd('FocusGained', {
     end
     -- Restart LSP if it was stopped
     if #vim.lsp.get_clients() == 0 then
-      vim.cmd('edit') -- re-triggers LSP attach
+      -- Re-enable LSP servers (doesn't require reloading file)
+      vim.lsp.enable('tsgo')
+      vim.lsp.enable('biome')
+      vim.lsp.enable('oxlint')
     end
   end,
 })
