@@ -90,7 +90,7 @@ Read the user's SSH public key and pass it to the bootstrap:
 ```bash
 SSH_KEY=$(cat ~/.ssh/id_ed25519.pub)
 
-ssh azureuser@$VM_IP "curl -fsSL https://raw.githubusercontent.com/jorgensandhaug/nixos-dev-vm/main/bootstrap.sh | bash -s -- \
+ssh azureuser@$VM_IP "curl -fsSL https://raw.githubusercontent.com/jorgensandhaug/nixos-dev-vm/main/nixos/bootstrap.sh | bash -s -- \
   --ssh-key '$SSH_KEY' \
   --hostname '$VM_NAME' \
   --username '<desired-username>' \

@@ -4,7 +4,7 @@
 # Converts a fresh Ubuntu Azure Gen2 VM into a fully-configured NixOS machine.
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/jorgensandhaug/nixos-dev-vm/main/bootstrap.sh | \
+#   curl -fsSL https://raw.githubusercontent.com/jorgensandhaug/nixos-dev-vm/main/nixos/bootstrap.sh | \
 #     bash -s -- --ssh-key "ssh-ed25519 AAAA..." --hostname "my-vm" --username "myuser"
 #
 # Requirements:
@@ -22,6 +22,7 @@ SSH_PUBKEY=""
 TIMEZONE="UTC"
 DATA_DISK_SIZE=""  # empty = no data disk setup
 REPO_URL="https://raw.githubusercontent.com/jorgensandhaug/nixos-dev-vm/main"
+REPO_GIT="https://github.com/jorgensandhaug/nixos-dev-vm.git"
 NIXOS_CHANNEL="nixos-24.11"
 
 # ── Parse arguments ──────────────────────────────────────────────
@@ -161,7 +162,7 @@ echo "▶ Generating NixOS configuration..."
 sudo mkdir -p /etc/nixos
 
 # Download template
-curl -fsSL "$REPO_URL/configuration.nix.template" -o /tmp/configuration.nix.template
+curl -fsSL "$REPO_URL/nixos/configuration.nix.template" -o /tmp/configuration.nix.template
 
 # Substitute variables
 sed \
@@ -217,40 +218,38 @@ sudo NIXOS_INSTALL_BOOTLOADER=1 "$SYSTEM_BUILD/bin/switch-to-configuration" boot
 
 echo "  NixOS installed successfully!"
 
-# ── Step 9: Install nvim config ──────────────────────────────────
+# ── Step 9: Clone dotfiles and symlink configs ───────────────────
 echo ""
-echo "▶ Installing Neovim configuration..."
-NVIM_DIR="/home/$USERNAME/.config/nvim"
-sudo mkdir -p "$NVIM_DIR"
-curl -fsSL "$REPO_URL/nvim/init.lua" -o /tmp/nvim-init.lua
-sudo cp /tmp/nvim-init.lua "$NVIM_DIR/init.lua"
+echo "▶ Installing dotfiles (nvim, tmux)..."
+DOTFILES_DIR="/home/$USERNAME/dotfiles"
 
-for dir in lsp lua/config lua/plugins; do
-  sudo mkdir -p "$NVIM_DIR/$dir"
-done
+# Clone the repo
+sudo -u "$USERNAME" git clone "$REPO_GIT" "$DOTFILES_DIR" 2>/dev/null || {
+  echo "  Repo already cloned, pulling latest..."
+  sudo -u "$USERNAME" git -C "$DOTFILES_DIR" pull
+}
 
-for f in lsp/tsgo.lua lua/config/keymaps.lua lua/config/lsp.lua lua/config/options.lua \
-         lua/plugins/fzf-lua.lua lua/plugins/lsp.lua lua/plugins/nvim-tree.lua lua/plugins/treesitter.lua; do
-  curl -fsSL "$REPO_URL/nvim/$f" -o "/tmp/nvim-$(basename $f)"
-  sudo cp "/tmp/nvim-$(basename $f)" "$NVIM_DIR/$f"
-done
+# Symlink nvim config
+sudo -u "$USERNAME" mkdir -p "/home/$USERNAME/.config"
+if [[ -e "/home/$USERNAME/.config/nvim" ]]; then
+  echo "  Backing up existing nvim config to ~/.config/nvim.bak"
+  sudo -u "$USERNAME" mv "/home/$USERNAME/.config/nvim" "/home/$USERNAME/.config/nvim.bak"
+fi
+sudo -u "$USERNAME" ln -sf "$DOTFILES_DIR/nvim" "/home/$USERNAME/.config/nvim"
+echo "  Neovim config symlinked."
 
-# Download lazy-lock.json for reproducible plugin versions
-curl -fsSL "$REPO_URL/nvim/lazy-lock.json" -o /tmp/nvim-lazy-lock.json
-sudo cp /tmp/nvim-lazy-lock.json "$NVIM_DIR/lazy-lock.json"
+# Symlink tmux config
+if [[ -e "/home/$USERNAME/.tmux.conf" ]]; then
+  echo "  Backing up existing tmux.conf to ~/.tmux.conf.bak"
+  sudo -u "$USERNAME" mv "/home/$USERNAME/.tmux.conf" "/home/$USERNAME/.tmux.conf.bak"
+fi
+sudo -u "$USERNAME" ln -sf "$DOTFILES_DIR/tmux.conf" "/home/$USERNAME/.tmux.conf"
+echo "  tmux config symlinked."
 
-sudo chown -R "$USERNAME:users" "/home/$USERNAME/.config"
-echo "  Neovim config installed."
+sudo chown -R "$USERNAME:users" "/home/$USERNAME/.config" "$DOTFILES_DIR"
+echo "  Dotfiles installed."
 
-# ── Step 10: Install tmux config ───────────────────────────────────
-echo ""
-echo "▶ Installing tmux configuration..."
-curl -fsSL "$REPO_URL/tmux.conf" -o /tmp/tmux.conf
-sudo cp /tmp/tmux.conf "/home/$USERNAME/.tmux.conf"
-sudo chown "$USERNAME:users" "/home/$USERNAME/.tmux.conf"
-echo "  tmux config installed."
-
-# ── Step 11: Reboot ──────────────────────────────────────────────
+# ── Step 10: Reboot ──────────────────────────────────────────────
 echo ""
 echo "═══════════════════════════════════════════════════════════"
 echo "  NixOS installation complete!"

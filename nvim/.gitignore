@@ -1,0 +1,5 @@
+plugin/
+*.swp
+*.swo
+*~
+.netrwhist
