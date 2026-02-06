@@ -4,7 +4,7 @@ local map = vim.keymap.set
 -- (seamlessly moves between nvim windows AND tmux panes)
 
 -- Buffer navigation
-map('n', '<leader>q', '<cmd>bd<cr>', { desc = 'Close buffer' })
+map('n', '<leader>x', '<cmd>bd<cr>', { desc = 'Close buffer' })
 map('n', '<S-h>', '<cmd>bprevious<cr>', { desc = 'Previous buffer' })
 map('n', '<S-l>', '<cmd>bnext<cr>', { desc = 'Next buffer' })
 
