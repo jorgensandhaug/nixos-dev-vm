@@ -12,4 +12,9 @@ zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 # Autojump
-[ -f /run/current-system/sw/share/autojump/autojump.zsh ] && source /run/current-system/sw/share/autojump/autojump.zsh
+for f in /run/current-system/sw/share/autojump/autojump.zsh \
+         /nix/store/*-autojump-*/share/autojump/autojump.zsh \
+         /opt/homebrew/etc/profile.d/autojump.sh \
+         /usr/share/autojump/autojump.zsh; do
+  [ -f "$f" ] && source "$f" && break
+done
