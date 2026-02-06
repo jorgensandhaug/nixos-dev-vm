@@ -10,7 +10,7 @@ One-command setup for a fully-configured NixOS development VM on Azure.
 
 Tell your AI coding assistant (Claude Code, Cursor, etc.):
 
-> "Set up a NixOS dev VM for me following the instructions at https://github.com/jorgensandhaug/nixos-dev-vm/blob/main/nixos/AGENT.md"
+> "Set up a NixOS dev VM for me following the instructions at https://github.com/jorgensandhaug/dotfiles/blob/main/nixos/AGENT.md"
 
 The agent reads `AGENT.md` and handles everything. You just:
 1. Click one Tailscale auth link
@@ -29,7 +29,7 @@ The agent reads `AGENT.md` and handles everything. You just:
 
 2. SSH in and run the bootstrap:
    ```bash
-   ssh azureuser@<vm-ip> "curl -fsSL https://raw.githubusercontent.com/jorgensandhaug/nixos-dev-vm/main/nixos/bootstrap.sh | \
+   ssh azureuser@<vm-ip> "curl -fsSL https://raw.githubusercontent.com/jorgensandhaug/dotfiles/main/nixos/bootstrap.sh | \
      bash -s -- --ssh-key '$(cat ~/.ssh/id_ed25519.pub)' --hostname my-vm --username myname"
    ```
 

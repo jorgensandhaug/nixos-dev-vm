@@ -4,7 +4,7 @@
 # Converts a fresh Ubuntu Azure Gen2 VM into a fully-configured NixOS machine.
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/jorgensandhaug/nixos-dev-vm/main/nixos/bootstrap.sh | \
+#   curl -fsSL https://raw.githubusercontent.com/jorgensandhaug/dotfiles/main/nixos/bootstrap.sh | \
 #     bash -s -- --ssh-key "ssh-ed25519 AAAA..." --hostname "my-vm" --username "myuser"
 #
 # Requirements:
@@ -21,8 +21,8 @@ USERNAME="dev"
 SSH_PUBKEY=""
 TIMEZONE="UTC"
 DATA_DISK_SIZE=""  # empty = no data disk setup
-REPO_URL="https://raw.githubusercontent.com/jorgensandhaug/nixos-dev-vm/main"
-REPO_GIT="https://github.com/jorgensandhaug/nixos-dev-vm.git"
+REPO_URL="https://raw.githubusercontent.com/jorgensandhaug/dotfiles/main"
+REPO_GIT="https://github.com/jorgensandhaug/dotfiles.git"
 NIXOS_CHANNEL="nixos-24.11"
 
 # ── Parse arguments ──────────────────────────────────────────────

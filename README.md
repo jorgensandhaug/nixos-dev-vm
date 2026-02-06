@@ -5,13 +5,13 @@ Personal dotfiles: Neovim, tmux, and NixOS dev VM bootstrap.
 ## Quick Setup
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jorgensandhaug/nixos-dev-vm/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/jorgensandhaug/dotfiles/main/setup.sh | bash
 ```
 
 Or manually:
 
 ```bash
-git clone https://github.com/jorgensandhaug/nixos-dev-vm.git ~/dotfiles
+git clone https://github.com/jorgensandhaug/dotfiles.git ~/dotfiles
 cd ~/dotfiles && ./setup.sh
 ```
 

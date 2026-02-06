@@ -4,15 +4,15 @@
 # Works on macOS and Linux (including NixOS)
 #
 # Usage:
-#   git clone https://github.com/jorgensandhaug/nixos-dev-vm.git ~/dotfiles
+#   git clone https://github.com/jorgensandhaug/dotfiles.git ~/dotfiles
 #   cd ~/dotfiles && ./setup.sh
 #
 # Or one-liner:
-#   curl -fsSL https://raw.githubusercontent.com/jorgensandhaug/nixos-dev-vm/main/setup.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/jorgensandhaug/dotfiles/main/setup.sh | bash
 #
 set -euo pipefail
 
-REPO_URL="https://github.com/jorgensandhaug/nixos-dev-vm.git"
+REPO_URL="https://github.com/jorgensandhaug/dotfiles.git"
 DOTFILES_DIR="$HOME/dotfiles"
 
 # ── Clone repo if not already in it ──────────────────────────────
