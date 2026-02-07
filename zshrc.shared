@@ -45,6 +45,7 @@ zstyle ':completion:*' special-dirs true
 # Aliases
 alias lg="lazygit"
 alias cc="claude --dangerously-skip-permissions"
+alias n="nvim"
 
 # Starship prompt (on NixOS this is a no-op since programs.starship handles it)
 command -v starship &>/dev/null && eval "$(starship init zsh)"
